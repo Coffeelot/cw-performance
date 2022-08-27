@@ -1,0 +1,225 @@
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
+:root {
+    --primary-color: #c01d2e;
+	/* --background-color: var(--primary-color-dark);*/
+	--background-color: #eeeeeedf;
+	--text-color: #ffffff;
+    --accent-color: #c0392b;
+    --border-color: #ebebeb71;
+	--border-radius: 20px;
+    --border: 1px solid;
+}
+
+.tuner-app {
+    display: none;
+    height: 100%;
+    width: 100%;
+    background: #c01d2e;
+    overflow: hidden;
+    font-weight: 600;
+}
+
+.tuner-app-header {
+    position: absolute;
+    height: 9vh;
+    width: 100%;
+    text-align: center;
+    line-height: 13.5vh;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5vh;
+}
+
+.tuner-header-image {
+    width: 100%;
+}
+
+.tuner-homescreen {
+    height: 100%;
+    width: 100%;
+    left: 0vh;
+}
+
+.tuner-cardetails {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    height: fit-content;
+    width: 84%;
+    margin: 0 auto;
+    left: 0vh;
+    right: 0;
+    top: 11vh;
+}
+.tuner-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.tuner-reload {
+    background: var(--text-color);
+    color: var(--accent-color);
+    border-radius: 10px;
+    height: 3vh;
+    z-index: 300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tuner-reload:hover {
+    box-shadow:         inset 0 0 10px #23232367;
+}
+
+.tuner-reload:active {
+    box-shadow:         inset 0 0 10px #23232398;
+}
+
+.tuner-detail-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: .8vh;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: 2px solid var(--border-color);
+    border-radius: 2px;
+    margin-bottom: 1vh;
+    font-size: 1.2vh;
+}
+
+.tuner-detail-rating {
+    /* position: absolute;
+    bottom: 0; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: .8vh;
+    color: var(--primary-color);
+    background-color: white;
+    font-family: 'Poppins', sans-serif;
+    border-radius: 10px;
+    margin-bottom: 1vh;
+    font-weight: 800;
+    font-size: 3.0vh;
+}
+
+.vehicle-model {
+    position: relative;
+    width: 100%;
+    background-color: rgb(54, 54, 54);
+    padding: .8vh;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: .1vh solid #fff;
+    margin-bottom: 1vh;
+    font-size: 1.2vh;
+}
+
+.vehicle-plate {
+    position: relative;
+    width: 100%;
+    background-color: rgb(54, 54, 54);
+    padding: .8vh;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: .1vh solid #fff;
+    margin-bottom: 1vh;
+    font-size: 1.2vh;
+}
+
+.vehicle-tuner {
+    position: relative;
+    width: 100%;
+    background-color: rgb(54, 54, 54);
+    padding: .8vh;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: .1vh solid #fff;
+    margin-bottom: 1vh;
+    font-size: 1.2vh;
+}
+
+.vehicle-status {
+    position: relative;
+    width: 100%;
+    background-color: rgb(54, 54, 54);
+    padding: .8vh;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: .1vh solid #fff;
+    margin-bottom: 1vh;
+    font-size: 1.2vh;
+}
+
+.vehicle-fuel {
+    position: relative;
+    width: 100%;
+    background-color: rgb(54, 54, 54);
+    padding: .8vh;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: .1vh solid #fff;
+    margin-bottom: 1vh;
+    font-size: 1.2vh;
+}
+
+.vehicle-engine {
+    position: relative;
+    width: 100%;
+    background-color: rgb(54, 54, 54);
+    padding: .8vh;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: .1vh solid #fff;
+    margin-bottom: 1vh;
+    font-size: 1.2vh;
+}
+
+.vehicle-body {
+    position: relative;
+    width: 100%;
+    background-color: rgb(54, 54, 54);
+    padding: .8vh;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    border-bottom: .1vh solid #fff;
+    margin-bottom: 1vh;
+    font-size: 1.2vh;
+}
+
+
+.vehicle-answer {
+    float: right;
+    font-size: 1.1vh;
+}
+
+
+.return-track {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.return-track > div {
+    margin: 2px;
+    width: 50%;
+    height: 5vh;
+    background-color: rgb(233, 233, 233);
+    border-radius: .3vh;
+    transition: .05s linear;
+    text-align: center;
+    line-height: 5vh;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4vh;
+}
+
+.return-track > div:hover {
+    background-color: rgb(212, 212, 212);
+}
