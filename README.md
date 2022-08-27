@@ -10,6 +10,10 @@ Motorcycles have **NOT** been tested with. Mainly used for cars.
 [More scripts by us](https://github.com/stars/Coffeelot/lists/cw-scripts)  👈\
 [Support, updates and script previews](https://discord.gg/FJY4mtjaKr) 👈
 
+**All our scripts are and will remain free**. If you want to support what we do, you can buy us a coffee here:
+
+[![BuyUsCoffeePlease](https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-2.svg)](https://www.buymeacoffee.com/cwscriptbois )
+
 # Config 🔧
 **Debug**: Activate debug output (this will print all scores in console). Default is*true*\
 **UseCommand**: Allow the /checkscore command. Default is *true*\
