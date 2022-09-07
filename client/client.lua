@@ -5,11 +5,20 @@ local function getFieldFromHandling(vehicle, field)
 end
 
 local function getVehicleFromVehList(hash)
-	for _, v in pairs(QBCore.Shared.Vehicles) do
+	local found = false
+    for _, v in pairs(QBCore.Shared.Vehicles) do
 		if hash == v.hash then
+            found = true
 			return v.name, v.brand
 		end
 	end
+    if not found then
+        if Config.Debug then
+           print('It seems like you have not added your vehicles to the vehicles.lua')
+        end
+        return 'model not found', 'brand not found'
+
+    end
 end
 
 
