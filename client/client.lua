@@ -36,7 +36,7 @@ function getVehicleInfo(vehicle)
     local fTractionCurveMin = getFieldFromHandling(vehicle, "fTractionCurveMin")
     local fLowSpeedTractionLossMult = getFieldFromHandling(vehicle, "fLowSpeedTractionLossMult")
     local fSuspensionReboundDamp = getFieldFromHandling(vehicle, "fSuspensionReboundDamp")
-    local fSuspensionReboundComp = getFieldFromHandling(vehicle, "fSuspensionReboundComp")
+    local fSuspensionReboundComp = getFieldFromHandling(vehicle, "fSuspensionCompDamp")
     local fAntiRollBarForce = getFieldFromHandling(vehicle, "fAntiRollBarForce")
     local fBrakeForce = getFieldFromHandling(vehicle, "fBrakeForce")
     local drivetrain = 0.0 
