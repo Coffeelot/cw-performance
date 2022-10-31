@@ -9,7 +9,7 @@ let vehicle
 // });
 
 
-SetupDetails = function(data) {
+SetupDetailsTuner = function(data) {
     let dt = '';
     if ( data.drivetrain == 1.0 ) {
         dt = 'FWD'
@@ -48,7 +48,7 @@ function InitializeVehicle(whip) {
     $("#tuner-braking").find(".tuner-answer").html('');
     $("#tuner-drivetrain").find(".tuner-answer").html('');
     if (whip != null) {
-        SetupDetails(whip)
+        SetupDetailsTuner(whip)
     }
 }
 
