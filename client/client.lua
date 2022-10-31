@@ -36,16 +36,17 @@ function getVehicleInfo(vehicle)
     local fTractionCurveMin = getFieldFromHandling(vehicle, "fTractionCurveMin")
     local fLowSpeedTractionLossMult = getFieldFromHandling(vehicle, "fLowSpeedTractionLossMult")
     local fSuspensionReboundDamp = getFieldFromHandling(vehicle, "fSuspensionReboundDamp")
-    local fSuspensionReboundComp = getFieldFromHandling(vehicle, "fSuspensionCompDamp")
+    local fSuspensionReboundComp = getFieldFromHandling(vehicle, "fSuspensionReboundComp")
     local fAntiRollBarForce = getFieldFromHandling(vehicle, "fAntiRollBarForce")
     local fBrakeForce = getFieldFromHandling(vehicle, "fBrakeForce")
-    local drivetrain = 0.0 
+    local drivetrainMod = 0.0
+    
     if fDriveBiasFront > 0.5 then
         --fwd
-        drivetrain = 1.0-fDriveBiasFront
+        drivetrainMod = 1.0-fDriveBiasFront
     else
         --rwd
-        drivetrain = fDriveBiasFront
+        drivetrainMod = fDriveBiasFront
     end
 
     local score = {
@@ -56,11 +57,11 @@ function getVehicleInfo(vehicle)
         drivetrain = 0.0,
     }
 
-    score.drivetrain = drivetrain
+    score.drivetrain = fDriveBiasFront
 
     local force = fInitialDriveForce
     if fInitialDriveForce > 0 and fInitialDriveForce < 1 then
-        force = (force + drivetrain*0.15) * 1.1
+        force = (force + drivetrainMod*0.15) * 1.1
     end
 
     -- SPEED -- 
@@ -78,7 +79,7 @@ function getVehicleInfo(vehicle)
     else
         lowSpeedTraction = lowSpeedTraction - (lowSpeedTraction - fLowSpeedTractionLossMult)*0.15
     end
-    local handlingScore = (fTractionCurveMax + (fSuspensionReboundDamp+fSuspensionReboundComp+fAntiRollBarForce)/3) * (fTractionCurveMin/lowSpeedTraction) + drivetrain
+    local handlingScore = (fTractionCurveMax + (fSuspensionReboundDamp+fSuspensionReboundComp+fAntiRollBarForce)/3) * (fTractionCurveMin/lowSpeedTraction) + drivetrainMod
     score.handling = handlingScore
 
     -- BRAKING -- 
@@ -91,7 +92,7 @@ function getVehicleInfo(vehicle)
        print('speed', speedScore)
        print('handling', handlingScore)
        print('braking', brakingScore)
-       print('drivetrain', drivetrain)
+       print('drivetrain', fDriveBiasFront)
     end
     
     -- Balance -- 
