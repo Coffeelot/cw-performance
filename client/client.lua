@@ -105,19 +105,17 @@ function getVehicleInfo(vehicle)
     end
     
     -- Get class --
-    local class = "F"
-    if peformanceScore > 900 then
+    local class = "D"
+    if peformanceScore > Config.ClassLimits.X then
         class = "X"
-    elseif peformanceScore > 700 then
+    elseif peformanceScore > Config.ClassLimits.S then
         class = "S"
-    elseif peformanceScore > 600 then
+    elseif peformanceScore > Config.ClassLimits.A then
         class = "A"
-    elseif peformanceScore > 450 then
+    elseif peformanceScore > Config.ClassLimits.B then
         class = "B"
-    elseif peformanceScore > 350 then
+    elseif peformanceScore > Config.ClassLimits.C then
         class = "C"
-    else
-        class = "D"
     end
     
     return score, class, peformanceScore, vehicleModel, vehicleBrand
