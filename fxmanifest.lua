@@ -21,5 +21,6 @@ dependency{
 }
 
 exports {
-    'getVehicleInfo'
+    'getVehicleInfo',
+    'getPerformanceClasses'
 }

@@ -121,6 +121,10 @@ function getVehicleInfo(vehicle)
     return score, class, peformanceScore, vehicleModel, vehicleBrand
 end
 
+function getPerformanceClasses()
+    return Config.Classes
+end
+
 RegisterNetEvent('cw-performance:client:CheckPerformance', function()
     local veh = GetVehiclePedIsIn(PlayerPedId())
 
