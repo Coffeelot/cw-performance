@@ -28,6 +28,7 @@ function getVehicleInfo(vehicle)
 
     local fInitialDriveMaxFlatVel = getFieldFromHandling(vehicle, "fInitialDriveMaxFlatVel")
     local fInitialDriveForce = getFieldFromHandling(vehicle, "fInitialDriveForce")
+    local fDriveInertia = getFieldFromHandling(vehicle, 'fDriveInertia')
     local fClutchChangeRateScaleUpShift = getFieldFromHandling(vehicle, "fClutchChangeRateScaleUpShift")
     local nInitialDriveGears = getFieldFromHandling(vehicle, "nInitialDriveGears")
     local fDriveBiasFront = getFieldFromHandling(vehicle, "fDriveBiasFront")
@@ -61,7 +62,7 @@ function getVehicleInfo(vehicle)
 
     local force = fInitialDriveForce
     if fInitialDriveForce > 0 and fInitialDriveForce < 1 then
-        force = (force + drivetrainMod*0.15) * 1.1
+        force = ((force + drivetrainMod*0.15) * 1.1 ) + (fDriveInertia - 1.0)*0.1
     end
 
     -- SPEED -- 
