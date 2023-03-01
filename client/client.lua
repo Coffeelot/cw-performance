@@ -37,7 +37,7 @@ function getVehicleInfo(vehicle)
     local fTractionCurveMin = getFieldFromHandling(vehicle, "fTractionCurveMin")
     local fLowSpeedTractionLossMult = getFieldFromHandling(vehicle, "fLowSpeedTractionLossMult")
     local fSuspensionReboundDamp = getFieldFromHandling(vehicle, "fSuspensionReboundDamp")
-    local fSuspensionReboundComp = getFieldFromHandling(vehicle, "fSuspensionCompDamp")
+    local fSuspensionCompDamp = getFieldFromHandling(vehicle, "fSuspensionCompDamp")
     local fAntiRollBarForce = getFieldFromHandling(vehicle, "fAntiRollBarForce")
     local fBrakeForce = getFieldFromHandling(vehicle, "fBrakeForce")
     local drivetrainMod = 0.0
@@ -80,7 +80,7 @@ function getVehicleInfo(vehicle)
     else
         lowSpeedTraction = lowSpeedTraction - (lowSpeedTraction - fLowSpeedTractionLossMult)*0.15
     end
-    local handlingScore = (fTractionCurveMax + (fSuspensionReboundDamp+fSuspensionReboundComp+fAntiRollBarForce)/3) * (fTractionCurveMin/lowSpeedTraction) + drivetrainMod
+    local handlingScore = (fTractionCurveMax + (fSuspensionReboundDamp+fSuspensionCompDamp+fAntiRollBarForce)/3) * (fTractionCurveMin/lowSpeedTraction) + drivetrainMod
     score.handling = handlingScore
 
     -- BRAKING -- 
