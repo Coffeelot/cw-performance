@@ -194,7 +194,7 @@ function getVehicleInfo(vehicle)
     end
 
     -- Balance --
-    local balance = Config.Balance
+    local balance = Config.OldBalance
     local peformanceScore = math.floor(((accelScore * balance.acceleration) + (speedScore*balance.speed) + (handlingScore*balance.handling) + (brakingScore*balance.braking)) * balance.ratingMultiplier )
 
 

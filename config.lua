@@ -15,13 +15,13 @@ Config.Classes = {
 }
 
 -- OLD BALANCE: USE IF NOT USING NEW HANDLING
--- Config.Balance = {
---     acceleration = 4,
---     speed = 3,
---     handling = 2,
---     braking = 1,
---     ratingMultiplier = 12
--- }
+Config.OldBalance = {
+    acceleration = 4,
+    speed = 3,
+    handling = 2,
+    braking = 1,
+    ratingMultiplier = 12
+}
 
 Config.Balance = {
     acceleration = 1.65,
