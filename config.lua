@@ -1,7 +1,7 @@
 Config = {}
 
 Config.UseNewHandling = true -- Based off Natives
-Config.Debug = true
+Config.Debug = false
 Config.UseCommand = true -- Enables checkscore command
 
 -- This list holds the lower limits of the classes. So, for example:
