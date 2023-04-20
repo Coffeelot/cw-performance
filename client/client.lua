@@ -51,14 +51,6 @@ local function newHandling(vehicle)
         drivetrainMod = fDriveBiasFront
     end
 
-    local score = {
-        accel = 0.0,
-        speed = 0.0,
-        handling = 0.0,
-        braking = 0.0,
-        drivetrain = 0.0,
-    }
-
     local model = GetEntityModel(vehicle)
     local vehicleModel, vehicleBrand = getVehicleFromVehList(model)
     local accelScore = normalize_acceleration(GetVehicleAcceleration(vehicle))
@@ -73,9 +65,7 @@ local function newHandling(vehicle)
         lowSpeedTraction = lowSpeedTraction - (lowSpeedTraction - fLowSpeedTractionLossMult)*0.15
     end
     local handlingScore = (fTractionCurveMax + (fSuspensionReboundDamp+fSuspensionCompDamp+fAntiRollBarForce)/3) * (fTractionCurveMin/lowSpeedTraction) + drivetrainMod
-    score.handling = handlingScore
-        
-
+    
     if useDebug then
         print('====='..vehicleModel..'=====')
         print('accel', accelScore)
@@ -97,6 +87,13 @@ local function newHandling(vehicle)
         print('Total:', peformanceScore )
     end
  
+    local score = {
+        accel = accelScore,
+        speed = speedScore,
+        handling = handlingScore,
+        braking = brakingScore,
+        drivetrain = drivetrainMod,
+    }
  
      if useDebug then
         print('PerfRating: ', peformanceScore)
