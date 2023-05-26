@@ -23,20 +23,32 @@ local function getVehicleFromVehList(hash)
 end
 
 local function normalize_acceleration(acceleration)
-    local k = 6  -- scaling parameter
-    local normalized_acceleration = (10 / (1 + math.exp(-k*(acceleration - 0.6)))) - (10 / (1 + math.exp(-k*0.1))) + (10 / (1 + math.exp(-k*0.4)))
-    if acceleration < 0.22 then
-        normalized_acceleration = normalized_acceleration*(acceleration+0.3)
-    end
+    -- local k = 12  -- scaling parameter
+    -- local normalized_acceleration =  (10 / (1 + math.exp(-k*(acceleration- 0.4)))) - (10 / (1 + math.exp(-k*0.1))) + (10 / (1 + math.exp(-k*0.4)))
+    -- if acceleration < 0.22 then
+    --     normalized_acceleration = normalized_acceleration*(acceleration+0.3)
+    -- end
+    local magic = Config.AccelerationMagic
+    local adjusted_acceleration = acceleration - magic.adjust
+    adjusted_acceleration = adjusted_acceleration / magic.divide
+  
+    -- apply a logistic curve to the input
+    local normalized_acceleration = 1 / (1 + math.exp(magic.negMulti * (adjusted_acceleration - magic.adjustTwo )))
+  
+    -- adjust the output range to start at 1 and have a width of 9
+    normalized_acceleration = normalized_acceleration * 9 + 1
+  
+  
     return normalized_acceleration
   end
 
 local function newHandling(vehicle)
-    local fClutchChangeRateScaleUpShift = getFieldFromHandling(vehicle, "fClutchChangeRateScaleUpShift")
     local fTractionCurveMax = getFieldFromHandling(vehicle, "fTractionCurveMax")
     local fTractionCurveMin = getFieldFromHandling(vehicle, "fTractionCurveMin")
     local fInitialDragCoeff = getFieldFromHandling(vehicle, "fInitialDragCoeff")
     local fLowSpeedTractionLossMult = getFieldFromHandling(vehicle, "fLowSpeedTractionLossMult")
+    local fClutchChangeRateScaleUpShift = getFieldFromHandling(vehicle, "fClutchChangeRateScaleUpShift")
+    local fSuspensionForce = getFieldFromHandling(vehicle, "fSuspensionForce")
     local fSuspensionReboundDamp = getFieldFromHandling(vehicle, "fSuspensionReboundDamp")
     local fSuspensionCompDamp = getFieldFromHandling(vehicle, "fSuspensionCompDamp")
     local fAntiRollBarForce = getFieldFromHandling(vehicle, "fAntiRollBarForce")
@@ -53,7 +65,7 @@ local function newHandling(vehicle)
 
     local model = GetEntityModel(vehicle)
     local vehicleModel, vehicleBrand = getVehicleFromVehList(model)
-    local accelScore = normalize_acceleration(GetVehicleAcceleration(vehicle))
+    local accelScore = normalize_acceleration(GetVehicleAcceleration(vehicle)) + drivetrainMod*Config.Mods.drivetrainMultiplierAcceleration + fClutchChangeRateScaleUpShift*Config.Mods.gearUpMultiplier
     local speedScore = GetVehicleEstimatedMaxSpeed(vehicle)/(fInitialDragCoeff+2.0)
     local brakingScore = GetVehicleMaxBraking(vehicle)*7.0
 
@@ -64,7 +76,7 @@ local function newHandling(vehicle)
     else
         lowSpeedTraction = lowSpeedTraction - (lowSpeedTraction - fLowSpeedTractionLossMult)*0.15
     end
-    local handlingScore = (fTractionCurveMax + (fSuspensionReboundDamp+fSuspensionCompDamp+fAntiRollBarForce)/3) * (fTractionCurveMin/lowSpeedTraction) + drivetrainMod
+    local handlingScore = (fTractionCurveMax + (fSuspensionForce+fSuspensionReboundDamp+fSuspensionCompDamp+fAntiRollBarForce)/4) * (fTractionCurveMin/lowSpeedTraction) + drivetrainMod*Config.Mods.drivetrainMultiplierHandling
     
     if useDebug then
         print('====='..vehicleModel..'=====')
@@ -87,12 +99,14 @@ local function newHandling(vehicle)
         print('Total:', peformanceScore )
     end
  
+    local cheatMods = Config.CheatMods
+
     local score = {
-        accel = accelScore,
-        speed = speedScore,
-        handling = handlingScore,
-        braking = brakingScore,
-        drivetrain = drivetrainMod,
+        accel = accelScore + cheatMods.acceleration,
+        speed = speedScore + cheatMods.speed,
+        handling = handlingScore + cheatMods.handling,
+        braking = brakingScore + cheatMods.braking,
+        drivetrain = fDriveBiasFront,
     }
  
      if useDebug then
@@ -115,6 +129,20 @@ local function newHandling(vehicle)
  
      return score, class, peformanceScore, vehicleModel, vehicleBrand
 end
+
+local function getVehicleDetails(vehicle)
+    return {
+        antiRoll = getFieldFromHandling(vehicle, "fAntiRollBarForce"),
+        suspensionForce = getFieldFromHandling(vehicle, "fSuspensionForce"),
+        reboundDamp = getFieldFromHandling(vehicle, "fSuspensionReboundDamp"),
+        compDamp = getFieldFromHandling(vehicle, "fSuspensionCompDamp"),
+        gripLow = getFieldFromHandling(vehicle, "fTractionCurveMin"),
+        gripHigh = getFieldFromHandling(vehicle, "fTractionCurveMax"),
+        lowSpeedTraction = getFieldFromHandling(vehicle, "fLowSpeedTractionLossMult"),
+        camberStiffness = getFieldFromHandling(vehicle, "fCamberStiffnesss"),
+        offroadGripLoss =  getFieldFromHandling(vehicle, "fTractionLossMult"),
+    }
+end exports("getVehicleDetails", getVehicleDetails)
 
 function getVehicleInfo(vehicle)
     if Config.UseNewHandling then return newHandling(vehicle) end
