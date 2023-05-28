@@ -1,8 +1,10 @@
 # cw-performance 🏎
+## Recommended companion script: [cw-mechtool](https://github.com/Coffeelot/cw-mechtool)
 Simple little script to add ratings to cars depending on performance scores. The scoring checks acceleration, speed, handling, braking. Takes drivetrain into account.
 
 The script itself is small and only contains the functionality to score vehicles and not any fancy way to display it. 
 Motorcycles have **NOT** been tested with. Mainly used for cars.
+
 # Preview 📽
 [![YOUTUBE VIDEO](http://img.youtube.com/vi/tUQlQjmS5CA/0.jpg)](https://youtu.be/tUQlQjmS5CA)
 
