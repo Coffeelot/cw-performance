@@ -23,14 +23,9 @@ local function getVehicleFromVehList(hash)
 end
 
 local function normalize_acceleration(acceleration)
-    -- local k = 12  -- scaling parameter
-    -- local normalized_acceleration =  (10 / (1 + math.exp(-k*(acceleration- 0.4)))) - (10 / (1 + math.exp(-k*0.1))) + (10 / (1 + math.exp(-k*0.4)))
-    -- if acceleration < 0.22 then
-    --     normalized_acceleration = normalized_acceleration*(acceleration+0.3)
-    -- end
     local magic = Config.AccelerationMagic
-    local adjusted_acceleration = acceleration - magic.adjust
-    adjusted_acceleration = adjusted_acceleration / magic.divide
+    local adjusted_acceleration = acceleration - magic.adjust -- Adjust initial accelration
+    adjusted_acceleration = adjusted_acceleration / magic.divide -- Divide acceleration
   
     -- apply a logistic curve to the input
     local normalized_acceleration = 1 / (1 + math.exp(magic.negMulti * (adjusted_acceleration - magic.adjustTwo )))
@@ -55,28 +50,37 @@ local function newHandling(vehicle)
     local fDriveBiasFront = getFieldFromHandling(vehicle, "fDriveBiasFront")
     local drivetrainMod = 0.0
 
-    if fDriveBiasFront > 0.5 then
-        --fwd
-        drivetrainMod = 1.0-fDriveBiasFront
+
+    local awdDrivetrainAccelerationMod = 0.0
+    local awdDrivetrainHandlingMod = 0.0
+    if fDriveBiasFront == 0.0 or fDriveBiasFront == 1.0 then
+        --fwd or rwd
+        drivetrainMod = 0.0
     else
-        --rwd
-        drivetrainMod = fDriveBiasFront
+        --awd
+        awdDrivetrainAccelerationMod = Config.Mods.awdDrivetrainAcceleration
+        awdDrivetrainHandlingMod = Config.Mods.awdDrivetrainAcceleration
     end
 
     local model = GetEntityModel(vehicle)
     local vehicleModel, vehicleBrand = getVehicleFromVehList(model)
-    local accelScore = normalize_acceleration(GetVehicleAcceleration(vehicle)) + drivetrainMod*Config.Mods.drivetrainMultiplierAcceleration + fClutchChangeRateScaleUpShift*Config.Mods.gearUpMultiplier
+
+    local normalizedAcceleration = normalize_acceleration(GetVehicleAcceleration(vehicle))
+    local accelScore = normalizedAcceleration + awdDrivetrainAccelerationMod*normalizedAcceleration + fClutchChangeRateScaleUpShift*Config.Mods.gearUpMultiplier
     local speedScore = GetVehicleEstimatedMaxSpeed(vehicle)/(fInitialDragCoeff+2.0)
-    local brakingScore = GetVehicleMaxBraking(vehicle)*7.0
+    local brakingScore = GetVehicleMaxBraking(vehicle)*10.0
 
     -- HANDLING --
     local lowSpeedTraction = 1.0
-    if fLowSpeedTractionLossMult >= 1.0 then
-        lowSpeedTraction = lowSpeedTraction + (fLowSpeedTractionLossMult-lowSpeedTraction)*0.15
-    else
-        lowSpeedTraction = lowSpeedTraction - (lowSpeedTraction - fLowSpeedTractionLossMult)*0.15
+    if Config.Mods.lowSpeedTractionLoss then 
+        if fLowSpeedTractionLossMult >= 1.0 then
+            lowSpeedTraction = lowSpeedTraction + (fLowSpeedTractionLossMult-lowSpeedTraction)*0.15
+        else
+            lowSpeedTraction = lowSpeedTraction - (lowSpeedTraction - fLowSpeedTractionLossMult)*0.15
+        end
     end
-    local handlingScore = (fTractionCurveMax + (fSuspensionForce+fSuspensionReboundDamp+fSuspensionCompDamp+fAntiRollBarForce)/4) * (fTractionCurveMin/lowSpeedTraction) + drivetrainMod*Config.Mods.drivetrainMultiplierHandling
+
+    local handlingScore = (fTractionCurveMax + (fSuspensionForce+fSuspensionReboundDamp+fSuspensionCompDamp+fAntiRollBarForce)/4) * (fTractionCurveMin/lowSpeedTraction) + awdDrivetrainHandlingMod
     
     if useDebug then
         print('====='..vehicleModel..'=====')

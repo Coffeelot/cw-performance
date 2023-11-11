@@ -22,19 +22,19 @@ Config.AccelerationMagic = { -- This is modifiers for the acceleration calculcat
 }
 
 Config.Mods = {
-    drivetrainMultiplierHandling = 3, -- AWD impact on handling
-    drivetrainMultiplierAcceleration = 2, -- AWD impact on acceleration
-    gearUpMultiplier = 0.6, -- Gear change speed impact on acceleration
+    awdDrivetrainHandling = 3, -- AWD impact on handling
+    awdDrivetrainAcceleration = 0.1, -- AWD impact on acceleration (0.0-1.0 is best)
+    gearUpMultiplier = 0.9, -- Gear change speed impact on acceleration
     suspensionDivider = 4, -- Suspension and roll impact on handling (higher means more)
+    lowSpeedTractionLoss = false, -- LowSpeedtractionLossMult has effect on handling (commonly set to 0.0 for realism)
 }
 
-
 Config.Balance = { -- USE TO BALANCE THE HANDLING SCORE TO HOWEVER YOU WANT
-    acceleration = 1.39,
-    speed = 1.25,
-    handling = 1.1,
-    braking = 0.4,
-    ratingMultiplier = 17
+    acceleration = 1.3,
+    speed = 1.3,
+    handling = 1.3,
+    braking = 0.55,
+    ratingMultiplier = 16
 }
 
 Config.CheatMods = { -- USE THESE IF YOU WANNA DISPLAY MORE "PRETTY" NUMBERS. DOEST NOT AFFECT SCORE JUST THE VISUAL SCORES
