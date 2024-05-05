@@ -1,25 +1,21 @@
-local QBCore = exports['qb-core']:GetCoreObject()
 local useDebug = Config.Debug
+
+local function notify(text, type)
+    if Config.NotifySystem == 'ox' then
+        lib.notify({
+            title = text,
+            type = type,
+        })
+    elseif Config.NotifySystem == 'qb' then
+        local QBCore = exports['qb-core']:GetCoreObject()
+        QBCore.Functions.Notify(text, type)
+    else
+        print('^6'..text)
+    end
+end
 
 local function getFieldFromHandling(vehicle, field)
     return GetVehicleHandlingFloat(vehicle, 'CHandlingData', field)
-end
-
-local function getVehicleFromVehList(hash)
-	local found = false
-    for _, v in pairs(QBCore.Shared.Vehicles) do
-		if hash == v.hash then
-            found = true
-			return v.name, v.brand
-		end
-	end
-    if not found then
-        if useDebug then
-           print('It seems like you have not added your vehicles to the vehicles.lua')
-        end
-        return 'model not found', 'brand not found'
-
-    end
 end
 
 local function normalize_acceleration(acceleration)
@@ -63,7 +59,6 @@ local function newHandling(vehicle)
     end
 
     local model = GetEntityModel(vehicle)
-    local vehicleModel, vehicleBrand = getVehicleFromVehList(model)
 
     local normalizedAcceleration = normalize_acceleration(GetVehicleAcceleration(vehicle))
     local accelScore = normalizedAcceleration + awdDrivetrainAccelerationMod*normalizedAcceleration + fClutchChangeRateScaleUpShift*Config.Mods.gearUpMultiplier
@@ -83,7 +78,7 @@ local function newHandling(vehicle)
     local handlingScore = (fTractionCurveMax + (fSuspensionForce+fSuspensionReboundDamp+fSuspensionCompDamp+fAntiRollBarForce)/4) * (fTractionCurveMin/lowSpeedTraction) + awdDrivetrainHandlingMod
     
     if useDebug then
-        print('====='..vehicleModel..'=====')
+        print('====='..model..'=====')
         print('accel', accelScore)
         print('speed', speedScore)
         print('handling', handlingScore)
@@ -131,7 +126,7 @@ local function newHandling(vehicle)
          class = "C"
      end
  
-     return score, class, peformanceScore, vehicleModel, vehicleBrand
+     return score, class, peformanceScore
 end
 
 local function getVehicleDetails(vehicle)
@@ -151,7 +146,6 @@ end exports("getVehicleDetails", getVehicleDetails)
 function getVehicleInfo(vehicle)
     if Config.UseNewHandling then return newHandling(vehicle) end
     local model = GetEntityModel(vehicle)
-    local vehicleModel, vehicleBrand = getVehicleFromVehList(model)
 
     local fInitialDriveMaxFlatVel = getFieldFromHandling(vehicle, "fInitialDriveMaxFlatVel")
     local fInitialDriveForce = getFieldFromHandling(vehicle, "fInitialDriveForce")
@@ -214,7 +208,7 @@ function getVehicleInfo(vehicle)
     score.braking = brakingScore
 
     if useDebug then
-       print('====='..vehicleModel..'=====')
+       print('====='..model..'=====')
        print('accel', accelScore)
        print('speed', speedScore)
        print('handling', handlingScore)
@@ -245,21 +239,21 @@ function getVehicleInfo(vehicle)
         class = "C"
     end
 
-    return score, class, peformanceScore, vehicleModel, vehicleBrand
+    return score, class, peformanceScore
 end
 
 function getPerformanceClasses()
     return Config.Classes
-end
+end exports("getPerformanceClasses", getPerformanceClasses)
 
 RegisterNetEvent('cw-performance:client:CheckPerformance', function()
     local veh = GetVehiclePedIsIn(PlayerPedId())
 
     if veh == 0 then
-        QBCore.Functions.Notify("Not in a vehicle", 'error')
+        notify("Not in a vehicle", 'error')
     else
         local info, class, perfRating = getVehicleInfo(veh)
-        QBCore.Functions.Notify("This car is a "..class..perfRating, 'success')
+        notify("This car is a "..class..perfRating, 'success')
     end
 end)
 

@@ -3,7 +3,7 @@ Config = {}
 Config.UseNewHandling = true -- Based off Natives
 Config.Debug = false
 Config.UseCommand = true -- Enables checkscore command
-
+Config.NotifySystem = 'qb' -- supported: 'ox' and 'qb'. If none of these it will print to console. See fucntion 'notify' in client.lua to add your preffered notification system
 -- This list holds the lower limits of the classes. So, for example:
 -- A car that gets a score under 350 will be a D, a car that gets 351 becomes a C, a car that gets 451 will be a B
 Config.Classes = {
@@ -14,11 +14,14 @@ Config.Classes = {
     X = 1000
 }
 
+-- Short note: "acceleration" is used in the following block as a name for mainly fInitialDriveForce, 
+-- but it also includes other values like fInitialDriveMaxFlatVel and gearing values. 
+-- This value is derived from the native GetVehicleAcceleration
 Config.AccelerationMagic = { -- This is modifiers for the acceleration calculcation. Update if you like messing around
-    adjust = 0.07,
-    divide = 0.6,
-    negMulti = -9,
-    adjustTwo = 0.4,
+    adjust = 0.07, -- 1. This will lower the base impact of vehicle acceleration (acceleration-adjust)
+    divide = 0.6, -- This is what we divide the previus result by: (acceleration-adjust)/divide
+    negMulti = -9, -- This is how much the exponential is multiplied by
+    adjustTwo = 0.4, -- this is mainly to make the acceleration above certain limits lower it's impact (as it tends to just become less impactful at higer degrees)
 }
 
 Config.Mods = {
