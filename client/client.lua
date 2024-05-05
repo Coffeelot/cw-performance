@@ -240,7 +240,7 @@ function getVehicleInfo(vehicle)
     end
 
     return score, class, peformanceScore
-end
+end exports('getVehicleInfo', getVehicleInfo)
 
 function getPerformanceClasses()
     return Config.Classes
