@@ -60,9 +60,21 @@ Head down to the bottom of the file and in the list of JS files (marked by comme
 
 # Client
 In the qb-phone/client/main.lua add callback somewhere:
-```
+```lua
+
+local function getVehicleFromVehList(hash)
+    for _, v in pairs(QBCore.Shared.Vehicles) do
+		if hash == joaat(v.hash) then
+			return v.name, v.brand
+		end
+	end
+    print('^1It seems like you have not added your vehicle ('..GetDisplayNameFromVehicleModel(hash)..') to the vehicles.lua')
+    return 'model not found', 'brand not found'
+end
+
 RegisterNUICallback('UpdateVehicle', function(data, cb)
-    local info, class, perfRating, model, brand = exports['cw-performance']:getVehicleInfo(GetPlayersLastVehicle())
+    local info, class, perfRating = exports['cw-performance']:getVehicleInfo(GetPlayersLastVehicle())
+    loal model, brand = getVehicleFromVehList(GetEntityModel(GetPlayersLastVehicle()))
     local data = {
         brand = brand,
         rating = class..''..perfRating,
