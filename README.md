@@ -22,6 +22,10 @@ Motorcycles have **NOT** been tested with. Mainly used for cars.
 <a href="https://discord.gg/FJY4mtjaKr"> <img src="https://media.discordapp.net/attachments/1202695794537537568/1285652389080334337/discord.png?ex=66eb0c97&is=66e9bb17&hm=b1b2c17715f169f57cf646bb9785b0bf833b2e4037ef47609100ec8e902371df&=&format=webp" width="200"></a>
 
 
+### If you want to support what we do, you can buy us a coffee here:
+
+[![Buy Us a Coffee](https://www.buymeacoffee.com/assets/img/guidelines/download-assets-sm-2.svg)](https://www.buymeacoffee.com/cwscriptbois )
+
 # Config 🔧
 **Debug**: Activate debug output (this will print all scores in console). Default is*true*\
 **UseCommand**: Allow the /checkscore command. Default is *true*\
@@ -31,8 +35,10 @@ Motorcycles have **NOT** been tested with. Mainly used for cars.
 
 ## Basic use
 If you want to use the script you can add this line to get the scores, class brand and rating from anywhere:
-```local info, class, brand, perfRating = exports['cw-performance']:getVehicleInfo(GetVehiclePedIsIn(PlayerPedId()))```
+```local info, class, perfRating = exports['cw-performance']:getVehicleInfo(GetVehiclePedIsIn(PlayerPedId()))```
 You can then use the info.x to get any specific score (info.accel for acceleration for example), class for the letter-class (A-F), brand for the brand of the car, 
+
+> You can find example uses in [cw-racingapp](https://github.com/Coffeelot/cw-racingapp) and [cw-mechtool](https://github.com/Coffeelot/cw-mechtool)
 
 ## Add to [QB-racing](https://github.com/ItsANoBrainer/qb-racing) 🚗
 Basic (just showing class):
