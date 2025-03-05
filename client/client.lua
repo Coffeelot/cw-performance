@@ -22,7 +22,7 @@ local function notify(text, type)
         local QBCore = exports['qb-core']:GetCoreObject()
         QBCore.Functions.Notify(text, type)
     else
-        print('^6' .. text)
+        print('^6'..text)
     end
 end
 
@@ -32,16 +32,16 @@ end
 
 local function normalize_acceleration(acceleration)
     local magic = Config.AccelerationMagic
-    local adjusted_acceleration = acceleration - magic.adjust    -- Adjust initial accelration
+    local adjusted_acceleration = acceleration - magic.adjust -- Adjust initial accelration
     adjusted_acceleration = adjusted_acceleration / magic.divide -- Divide acceleration
-
+  
     -- apply a logistic curve to the input
-    local normalized_acceleration = 1 / (1 + math.exp(magic.negMulti * (adjusted_acceleration - magic.adjustTwo)))
-
+    local normalized_acceleration = 1 / (1 + math.exp(magic.negMulti * (adjusted_acceleration - magic.adjustTwo )))
+  
     -- adjust the output range to start at 1 and have a width of 9
     normalized_acceleration = normalized_acceleration * 9 + 1
-
-
+  
+  
     return normalized_acceleration
 end
 
@@ -55,12 +55,37 @@ local function getVehicleDetails(vehicle)
         gripHigh = getFieldFromHandling(vehicle, "fTractionCurveMax"),
         lowSpeedTraction = getFieldFromHandling(vehicle, "fLowSpeedTractionLossMult"),
         camberStiffness = getFieldFromHandling(vehicle, "fCamberStiffnesss"),
-        offroadGripLoss = getFieldFromHandling(vehicle, "fTractionLossMult"),
+        offroadGripLoss =  getFieldFromHandling(vehicle, "fTractionLossMult"),
     }
-end
-exports("getVehicleDetails", getVehicleDetails)
+end exports("getVehicleDetails", getVehicleDetails)
 
-local function getVehicleInfo(vehicle)
+local function createSortedList()
+    local iList = {}
+    
+    for class, value in pairs(Config.Classes) do
+        table.insert(iList, { class = class, startsAt = value })
+    end
+    
+    table.sort(iList, function(a, b) return a.startsAt < b.startsAt end)
+    
+    return iList
+end
+
+local sortedClassList = createSortedList()
+
+
+
+local function getClassLetter(score)
+    local classToReturn = Config.LowestClass
+    for _, classData in pairs(sortedClassList) do
+        if classData.startsAt > score then return classToReturn end 
+        classToReturn = classData.class
+    end
+    return classToReturn
+end
+
+
+function getVehicleInfo(vehicle)
     local fTractionCurveMax = getFieldFromHandling(vehicle, "fTractionCurveMax")
     local fTractionCurveMin = getFieldFromHandling(vehicle, "fTractionCurveMin")
     local fInitialDragCoeff = getFieldFromHandling(vehicle, "fInitialDragCoeff")
@@ -75,7 +100,7 @@ local function getVehicleInfo(vehicle)
 
     local awdDrivetrainAccelerationMod = 0.0
     local awdDrivetrainHandlingMod = 0.0
-    if not (fDriveBiasFront == 0.0 or fDriveBiasFront == 1.0) then
+    if not(fDriveBiasFront == 0.0 or fDriveBiasFront == 1.0) then
         --awd
         awdDrivetrainAccelerationMod = Config.Mods.awdDrivetrainAcceleration
         awdDrivetrainHandlingMod = Config.Mods.awdDrivetrainAcceleration
@@ -84,88 +109,70 @@ local function getVehicleInfo(vehicle)
     local model = GetEntityModel(vehicle)
 
     local normalizedAcceleration = normalize_acceleration(GetVehicleAcceleration(vehicle))
-    local accelScore = normalizedAcceleration + awdDrivetrainAccelerationMod * normalizedAcceleration +
-    fClutchChangeRateScaleUpShift * Config.Mods.gearUpMultiplier
-    local speedScore = GetVehicleEstimatedMaxSpeed(vehicle) / (fInitialDragCoeff + 2.0)
-    local brakingScore = GetVehicleMaxBraking(vehicle) * 10.0
+    local accelScore = normalizedAcceleration + awdDrivetrainAccelerationMod*normalizedAcceleration + fClutchChangeRateScaleUpShift*Config.Mods.gearUpMultiplier
+    local speedScore = GetVehicleEstimatedMaxSpeed(vehicle)/(fInitialDragCoeff+2.0)
+    local brakingScore = GetVehicleMaxBraking(vehicle)*10.0
 
     -- HANDLING --
     local lowSpeedTraction = 1.0
-    if Config.Mods.lowSpeedTractionLoss then
+    if Config.Mods.lowSpeedTractionLoss then 
         if fLowSpeedTractionLossMult >= 1.0 then
-            lowSpeedTraction = lowSpeedTraction + (fLowSpeedTractionLossMult - lowSpeedTraction) * 0.15
+            lowSpeedTraction = lowSpeedTraction + (fLowSpeedTractionLossMult-lowSpeedTraction)*0.15
         else
-            lowSpeedTraction = lowSpeedTraction - (lowSpeedTraction - fLowSpeedTractionLossMult) * 0.15
+            lowSpeedTraction = lowSpeedTraction - (lowSpeedTraction - fLowSpeedTractionLossMult)*0.15
         end
     end
 
-    local handlingScore = (fTractionCurveMax + (fSuspensionForce + fSuspensionReboundDamp + fSuspensionCompDamp + fAntiRollBarForce) / 4) *
-    (fTractionCurveMin / lowSpeedTraction) + awdDrivetrainHandlingMod
-
+    local handlingScore = (fTractionCurveMax + (fSuspensionForce+fSuspensionReboundDamp+fSuspensionCompDamp+fAntiRollBarForce)/4) * (fTractionCurveMin/lowSpeedTraction) + awdDrivetrainHandlingMod
+    
     if UseDebug then
-        print('=====' .. model .. '=====')
+        print('====='..model..'=====')
         print('accel', accelScore)
         print('speed', speedScore)
         print('handling', handlingScore)
         print('braking', brakingScore)
         print('drivetrain', fDriveBiasFront)
-    end
-
-    -- Balance --
-    local balance = Config.Balance
-    local peformanceScore = math.floor(((accelScore ^ balance.acceleration) + (speedScore ^ balance.speed) + (handlingScore ^ balance.handling) + (brakingScore ^ balance.braking)) *
-    balance.ratingMultiplier)
+     end
+ 
+     -- Balance --
+     local balance = Config.Balance
+     local peformanceScore = math.floor(((accelScore ^ balance.acceleration) + (speedScore^balance.speed) + (handlingScore^balance.handling) + (brakingScore^balance.braking))* balance.ratingMultiplier )
     if UseDebug then
         print(' PI SCORING: ')
         print('accelScore', (accelScore ^ balance.acceleration))
-        print('speedScore', (speedScore ^ balance.speed))
-        print('handlingScore', (handlingScore ^ balance.handling))
-        print('brakingScore', (brakingScore ^ balance.braking))
-        print('Total:', peformanceScore)
+        print('speedScore', (speedScore^balance.speed))
+        print('handlingScore', (handlingScore^balance.handling))
+        print('brakingScore', (brakingScore^balance.braking))
+        print('Total:', peformanceScore )
     end
-
+ 
     local cheatMods = Config.CheatMods
 
-    local score = {
+    local info = {
         accel = accelScore + cheatMods.acceleration,
         speed = speedScore + cheatMods.speed,
         handling = handlingScore + cheatMods.handling,
         braking = brakingScore + cheatMods.braking,
         drivetrain = fDriveBiasFront,
     }
-
-    -- Get class --
-    local class = "D"
-    if peformanceScore > Config.Classes.X then
-        class = "X"
-    elseif peformanceScore > Config.Classes.S then
-        class = "S"
-    elseif peformanceScore > Config.Classes.A then
-        class = "A"
-    elseif peformanceScore > Config.Classes.B then
-        class = "B"
-    elseif peformanceScore > Config.Classes.C then
-        class = "C"
-    end
-
-    return score, class, peformanceScore
-end
-exports('getVehicleInfo', getVehicleInfo)
+  
+    local class = getClassLetter(peformanceScore)
+    return info, class, peformanceScore
+end exports('getVehicleInfo', getVehicleInfo)
 
 local function getPerformanceClasses()
     return Config.Classes
-end
-exports("getPerformanceClasses", getPerformanceClasses)
+end exports("getPerformanceClasses", getPerformanceClasses)
 
 local function checkPerformance()
     local veh = GetVehiclePedIsIn(PlayerPedId(), false)
-
+    
     if veh == 0 then
         notify("Not in a vehicle", 'error')
     else
         local score, class, perfRating = getVehicleInfo(veh)
-        notify("This car is a " .. class .. perfRating, 'success')
-        debugLog('score', json.encode(score, { indent = true }))
+        notify("This car is a "..class..perfRating, 'success')
+        debugLog('score', json.encode(score, {indent=true}))
     end
 end
 
@@ -174,12 +181,12 @@ RegisterNetEvent('cw-performance:client:CheckPerformance', function()
 end)
 
 RegisterNetEvent('cw-performance:client:toggleDebug', function(debug)
-    print('Setting debug to', debug)
-    UseDebug = debug
+   print('Setting debug to',debug)
+   UseDebug = debug
 end)
 
 RegisterCommand("checkscore", function(source)
     if Config.UseCommand then
         checkPerformance()
     end
-end, true)
+end, false)
