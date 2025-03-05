@@ -12,14 +12,12 @@ Motorcycles have **NOT** been tested with. Mainly used for cars.
 [![YOUTUBE VIDEO](http://img.youtube.com/vi/tUQlQjmS5CA/0.jpg)](https://youtu.be/tUQlQjmS5CA)
 
 # Links
-### ⭐ Check out our [Tebex store](https://cw-scripts.tebex.io/category/2523396) for some cheap scripts ⭐
-
 
 ### [More free scripts](https://github.com/stars/Coffeelot/lists/cw-scripts)  👈
 
 ### Support, updates and script previews:
 
-<a href="https://discord.gg/FJY4mtjaKr"> <img src="https://media.discordapp.net/attachments/1202695794537537568/1285652389080334337/discord.png?ex=66eb0c97&is=66e9bb17&hm=b1b2c17715f169f57cf646bb9785b0bf833b2e4037ef47609100ec8e902371df&=&format=webp" width="200"></a>
+## <a href="https://discord.gg/FJY4mtjaKr"> 🌭 JOIN THE DISCORD 🌭</a> 
 
 
 ### If you want to support what we do, you can buy us a coffee here:
@@ -38,9 +36,19 @@ If you want to use the script you can add this line to get the scores, class bra
 ```local info, class, perfRating = exports['cw-performance']:getVehicleInfo(GetVehiclePedIsIn(PlayerPedId()))```
 You can then use the info.x to get any specific score (info.accel for acceleration for example), class for the letter-class (A-F), brand for the brand of the car, 
 
-> You can find example uses in [cw-racingapp](https://github.com/Coffeelot/cw-racingapp) and [cw-mechtool](https://github.com/Coffeelot/cw-mechtool)
+Example:
+```lua
+local Player = PlayerPedId()
+local vehicle = GetVehiclePedIsUsing(Player)
+local info, class, perfRating = exports['cw-performance']:getVehicleInfo(vehicle)
+print('CLASS', class)
+print('PERFORMANCE RATING', perfRating)
+print('Info', json.encode(info, {indent=true}))
+```
 
 ## Add to [QB-racing](https://github.com/ItsANoBrainer/qb-racing) 🚗
+> This is dated, but still showcases an example of how to use the info fetch
+
 Basic (just showing class):
 In qb-racing/client/main.lua find the NetEvent called `"qb-racing:Client:OpenMainMenu"` and add this to the top 
 `local info, class, perfRating = exports['cw-performance']:getVehicleInfo(GetPlayersLastVehicle())` 
@@ -54,3 +62,5 @@ If you want a more advanced version, join the discord and check there is a downl
 
 ## Add app 📱
 If you want to add the phone app, check the PHONE.md in the implementations folder.
+
+> This is VERY dated. Highly suggests not using this. If you want to display data, use the the first return value (`info`) from the last example to display all stats etc.
