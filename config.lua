@@ -1,13 +1,15 @@
 Config = {}
 Config.Debug = false
 
-Config.UseCommand = true   -- Enables checkscore command
-Config.NotifySystem =
-'ox'                       -- supported: 'ox' and 'qb'. If none of these it will print to console. See fucntion 'notify' in client.lua to add your preffered notification system
+Config.UseCommand = true -- Enables checkscore command
+Config.AdminOnly = false -- Only allow using checkscore for admins
+Config.NotifySystem = 'ox' -- supported: 'ox' and 'qb'. If none of these it will print to console. See fucntion 'notify' in client.lua to add your preffered notification system
 
 -- This list holds the lower limits of the classes. So, for example:
 -- A car that gets a score under 350 will be a D, a car that gets 351 becomes a C, a car that gets 451 will be a B
+Config.LowestClass = 'E'
 Config.Classes = {
+    D = 250,
     C = 350,
     B = 400,
     A = 600,
@@ -15,8 +17,8 @@ Config.Classes = {
     X = 1000
 }
 
--- Short note: "acceleration" is used in the following block as a name for mainly fInitialDriveForce,
--- but it also includes other values like fInitialDriveMaxFlatVel and gearing values.
+-- Short note: "acceleration" is used in the following block as a name for mainly fInitialDriveForce, 
+-- but it also includes other values like fInitialDriveMaxFlatVel and gearing values. 
 -- This value is derived from the native GetVehicleAcceleration
 Config.AccelerationMagic = { -- This is modifiers for the acceleration calculcation. Update if you like messing around
     adjust = 0.07,           -- 1. This will lower the base impact of vehicle acceleration (acceleration-adjust)
@@ -49,3 +51,30 @@ Config.CheatMods = { -- USE THESE IF YOU WANNA DISPLAY MORE "PRETTY" NUMBERS. DO
     handling = 0.0,
     braking = 0.0,
 }
+
+-- THE FOLLOWING REQUIRES OXLIB
+Config.AllowDrawTextDisplay = true -- If enabled you can use a hotkey to display classes over vehicles. Make sure oxlib is imported in the fxmanifest
+
+Config.DrawTextSetup = {
+    height = 2.0, -- height above vehicle the label displays
+    distance = 20.0, -- Distance from players where performance index is visible
+    showPillar = true, -- if false then disables pillar, if your arent into that kinda thing
+    markerType = 1, -- marker type, 0 is a cone and 1 is pillar. Google fivem markers for more
+    baseSize = 0.04, -- Pillar size
+    defaultButton = 'F6' -- see https://docs.fivem.net/docs/game-references/input-mapper-parameter-ids/keyboard/
+}
+
+Config.ClassColors = {
+    A = { r = 180, g = 50, b = 50, a = 255 },    -- Muted Red
+    B = { r = 180, g = 100, b = 50, a = 255 },   -- Muted Orange
+    C = { r = 50, g = 180, b = 50, a = 255 },    -- Muted Green
+    D = { r = 50, g = 50, b = 180, a = 255 },    -- Muted Blue
+    E = { r = 100, g = 100, b = 100, a = 255 },  -- Muted Gray
+    S = { r = 100, g = 50, b = 150, a = 255 },   -- Muted Purple
+    X = { r = 225, g = 225, b = 225, a = 255 }      -- Dark Gray/Black
+}
+
+Config.DrawTextAuthFunc = function() 
+    -- Add whatever checks you want here
+    return true
+end
